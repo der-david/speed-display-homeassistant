@@ -41,10 +41,6 @@ def _last_vehicle(data: dict[str, Any]) -> dict[str, Any]:
     return data.get("last_vehicle") or {}
 
 
-def _last_transition(data: dict[str, Any]) -> dict[str, Any]:
-    return data.get("range_transition") or {}
-
-
 def _stats(data: dict[str, Any], period: str, key: str) -> Any:
     return ((data.get("stats") or {}).get(period) or {}).get(key)
 
@@ -55,10 +51,6 @@ def _unit(data: dict[str, Any]) -> str | None:
 
 def _last_vehicle_attrs(data: dict[str, Any]) -> dict[str, Any]:
     return dict(_last_vehicle(data))
-
-
-def _last_transition_attrs(data: dict[str, Any]) -> dict[str, Any]:
-    return dict(_last_transition(data))
 
 
 class SpeedDisplaySensor(CoordinatorEntity[SpeedDisplayCoordinator], SensorEntity):
@@ -259,42 +251,6 @@ SENSOR_DESCRIPTIONS: list[SpeedDisplaySensorDescription] = [
         state_class=SensorStateClass.MEASUREMENT,
         unit_fn=lambda data: "s",
         attributes_fn=_last_vehicle_attrs,
-    ),
-    SpeedDisplaySensorDescription(
-        "last_transition_from_range",
-        "Last Transition From Range",
-        lambda data: _last_transition(data).get("from_range"),
-        icon="mdi:swap-vertical-bold",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        attributes_fn=_last_transition_attrs,
-    ),
-    SpeedDisplaySensorDescription(
-        "last_transition_to_range",
-        "Last Transition To Range",
-        lambda data: _last_transition(data).get("to_range"),
-        icon="mdi:swap-vertical-bold",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        attributes_fn=_last_transition_attrs,
-    ),
-    SpeedDisplaySensorDescription(
-        "last_transition_speed",
-        "Last Transition Speed",
-        lambda data: _last_transition(data).get("speed"),
-        icon="mdi:speedometer",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        state_class=SensorStateClass.MEASUREMENT,
-        unit_fn=_unit,
-        attributes_fn=_last_transition_attrs,
-    ),
-    SpeedDisplaySensorDescription(
-        "last_transition_duration",
-        "Last Transition Duration",
-        lambda data: _last_transition(data).get("duration_s"),
-        icon="mdi:timer-outline",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        state_class=SensorStateClass.MEASUREMENT,
-        unit_fn=lambda data: "s",
-        attributes_fn=_last_transition_attrs,
     ),
 ]
 

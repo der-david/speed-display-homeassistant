@@ -77,13 +77,6 @@ Last vehicle:
 - Direction
 - Duration
 
-Last range transition:
-
-- From Range
-- To Range
-- Speed
-- Duration
-
 Daily, weekly, and total counters:
 
 - Vehicle Passes
@@ -113,7 +106,7 @@ Daily, weekly, and total speed statistics:
 
 ## Statistics semantics
 
-Statistics are based on complete `vehicle_passing` events, not intermediate `range_transition` events.
+Statistics and last-vehicle sensors are based on complete `vehicle_passing` events, not intermediate `range_transition` events. Range-transition events remain available on MQTT for external consumers, but the integration does not expose them as separate Home Assistant entities.
 
 `same`, `faster`, and `slower` are mutually exclusive and are derived from `initial_range` and `end_range`:
 
