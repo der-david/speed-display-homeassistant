@@ -22,7 +22,11 @@ class SpeedDisplayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not topic_prefix:
                 errors[CONF_TOPIC_PREFIX] = "required"
             else:
-                return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
+                await self.async_set_unique_id(topic_prefix)
+                self._abort_if_unique_id_configured()
+                data = dict(user_input)
+                data[CONF_TOPIC_PREFIX] = topic_prefix
+                return self.async_create_entry(title=data[CONF_NAME], data=data)
 
         schema = vol.Schema(
             {

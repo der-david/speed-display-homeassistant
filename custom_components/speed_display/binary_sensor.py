@@ -2,27 +2,51 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any, Callable
+
 from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.const import EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, SOURCE_SIMULATOR
 from .coordinator import SpeedDisplayCoordinator
 
+ValueFn = Callable[[dict[str, Any]], bool]
 
-class SpeedDisplaySimulatedBinarySensor(CoordinatorEntity[SpeedDisplayCoordinator], BinarySensorEntity):
-    """Expose whether the source is simulated."""
+
+@dataclass(frozen=True)
+class SpeedDisplayBinarySensorDescription:
+    """Description for one binary sensor."""
+
+    key: str
+    name: str
+    value_fn: ValueFn
+    icon: str | None = None
+    entity_category: EntityCategory | None = None
+
+
+class SpeedDisplayBinarySensor(CoordinatorEntity[SpeedDisplayCoordinator], BinarySensorEntity):
+    """Generic binary sensor backed by the coordinator."""
 
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: SpeedDisplayCoordinator) -> None:
+    def __init__(
+        self,
+        coordinator: SpeedDisplayCoordinator,
+        description: SpeedDisplayBinarySensorDescription,
+    ) -> None:
         super().__init__(coordinator)
-        self._attr_name = "Simulated"
-        self._attr_unique_id = f"{coordinator.entry.entry_id}_simulated"
-        self._attr_icon = "mdi:test-tube"
+        self.entity_description = description
+        self._value_fn = description.value_fn
+        self._attr_name = description.name
+        self._attr_unique_id = f"{coordinator.entry.entry_id}_{description.key}"
+        self._attr_icon = description.icon
+        self._attr_entity_category = description.entity_category
 
     @property
     def is_on(self) -> bool:
-        return self.coordinator.data.get("source") == SOURCE_SIMULATOR
+        return self._value_fn(self.coordinator.data)
 
     @property
     def device_info(self):
@@ -37,6 +61,35 @@ class SpeedDisplaySimulatedBinarySensor(CoordinatorEntity[SpeedDisplayCoordinato
         }
 
 
+BINARY_SENSOR_DESCRIPTIONS = [
+    SpeedDisplayBinarySensorDescription(
+        "simulated",
+        "Simulated",
+        lambda data: data.get("source") == SOURCE_SIMULATOR,
+        icon="mdi:test-tube",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SpeedDisplayBinarySensorDescription(
+        "vehicle_active",
+        "Vehicle Active",
+        lambda data: bool((data.get("status") or {}).get("vehicle_active")),
+        icon="mdi:car",
+    ),
+    SpeedDisplayBinarySensorDescription(
+        "network_reboot_required",
+        "Network Reboot Required",
+        lambda data: bool((data.get("status") or {}).get("network_reboot_required")),
+        icon="mdi:restart-alert",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+]
+
+
 async def async_setup_entry(hass, entry, async_add_entities):
     coordinator: SpeedDisplayCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([SpeedDisplaySimulatedBinarySensor(coordinator)])
+    async_add_entities(
+        [
+            SpeedDisplayBinarySensor(coordinator, description)
+            for description in BINARY_SENSOR_DESCRIPTIONS
+        ]
+    )

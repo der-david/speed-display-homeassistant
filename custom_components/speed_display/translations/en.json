@@ -1,0 +1,36 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Speed Display",
+        "description": "Connect a physical display or simulator through MQTT.",
+        "data": {
+          "name": "Name",
+          "topic_prefix": "MQTT topic prefix"
+        }
+      }
+    },
+    "error": {
+      "required": "This field is required."
+    },
+    "abort": {
+      "already_configured": "This MQTT topic prefix is already configured."
+    }
+  },
+  "services": {
+    "reset_stats": {
+      "name": "Reset statistics",
+      "description": "Reset Speed Display counters and aggregated speed statistics.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry ID",
+          "description": "Optional config entry ID. If omitted, all Speed Display entries are reset."
+        },
+        "period": {
+          "name": "Period",
+          "description": "Which statistics period to reset."
+        }
+      }
+    }
+  }
+}

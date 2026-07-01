@@ -1,0 +1,21 @@
+reset_stats:
+  name: Reset statistics
+  description: Reset Speed Display counters and aggregated speed statistics.
+  fields:
+    entry_id:
+      name: Config entry ID
+      description: Optional config entry ID. If omitted, all Speed Display entries are reset.
+      required: false
+      selector:
+        text:
+    period:
+      name: Period
+      description: Which statistics period to reset.
+      required: false
+      default: all
+      selector:
+        select:
+          options:
+            - all
+            - today
+            - week
