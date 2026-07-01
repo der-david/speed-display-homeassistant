@@ -10,7 +10,7 @@ from homeassistant.components import mqtt
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN, SOURCE_AUTO, SOURCE_FIRMWARE, SOURCE_SIMULATOR, SOURCE_UNKNOWN
+from .const import DOMAIN, SOURCE_FIRMWARE, SOURCE_SIMULATOR, SOURCE_UNKNOWN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,7 +28,6 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
         self.entry = entry
         self.topic_prefix = str(entry.data.get("topic_prefix", "")).strip("/")
-        self.source_hint = str(entry.data.get("source_hint", SOURCE_AUTO)).strip().lower()
         self._unsubs: list[Any] = []
         self.data = {
             "status": {},
@@ -37,7 +36,6 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "vehicle_passing": {},
             "range_transition": {},
             "source": SOURCE_UNKNOWN,
-            "simulated": False,
             "device_id": None,
             "display_id": None,
         }
@@ -45,20 +43,13 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def _noop_update(self) -> dict[str, Any]:
         return self.data
 
-    def _infer_source(self, payload: dict[str, Any]) -> tuple[str, bool]:
+    def _infer_source(self, payload: dict[str, Any]) -> str:
         source = str(payload.get("source") or "").strip().lower()
-        simulated = payload.get("simulated")
         if source == SOURCE_SIMULATOR:
-            return SOURCE_SIMULATOR, True
+            return SOURCE_SIMULATOR
         if source == SOURCE_FIRMWARE:
-            return SOURCE_FIRMWARE, False
-        if simulated is True:
-            return SOURCE_SIMULATOR, True
-        if simulated is False:
-            return SOURCE_FIRMWARE, False
-        if self.source_hint in (SOURCE_FIRMWARE, SOURCE_SIMULATOR):
-            return self.source_hint, self.source_hint == SOURCE_SIMULATOR
-        return SOURCE_UNKNOWN, False
+            return SOURCE_FIRMWARE
+        return SOURCE_UNKNOWN
 
     def _update_data(self, **changes: Any) -> None:
         updated = dict(self.data)
@@ -101,11 +92,10 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             parsed = raw
 
         if key == "status" and isinstance(parsed, dict):
-            source, simulated = self._infer_source(parsed)
+            source = self._infer_source(parsed)
             self._update_data(
                 status=parsed,
                 source=source,
-                simulated=simulated,
                 device_id=parsed.get("device_id"),
                 display_id=parsed.get("display_id"),
             )
@@ -136,12 +126,10 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             return
 
         if isinstance(parsed, dict):
-            source, simulated = self._infer_source(parsed)
+            source = self._infer_source(parsed)
             self._update_data(
                 **{
                     key: parsed,
                     "source": source,
-                    "simulated": simulated,
                 }
             )
-

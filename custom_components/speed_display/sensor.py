@@ -9,6 +9,7 @@ from homeassistant.const import EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
+from .const import SOURCE_SIMULATOR
 from .coordinator import SpeedDisplayCoordinator
 
 
@@ -42,7 +43,7 @@ class SpeedDisplaySensor(CoordinatorEntity[SpeedDisplayCoordinator], SensorEntit
     def extra_state_attributes(self) -> dict[str, Any]:
         return {
             "source": self.coordinator.data.get("source"),
-            "simulated": self.coordinator.data.get("simulated"),
+            "simulated": self.coordinator.data.get("source") == SOURCE_SIMULATOR,
             "device_id": self.coordinator.data.get("device_id"),
             "display_id": self.coordinator.data.get("display_id"),
         }
@@ -51,14 +52,13 @@ class SpeedDisplaySensor(CoordinatorEntity[SpeedDisplayCoordinator], SensorEntit
     def device_info(self):
         data = self.coordinator.data
         display_id = data.get("display_id") or self.coordinator.entry.data.get("display_id") or "?"
-        source = data.get("source") or self.coordinator.source_hint
-        simulated = bool(data.get("simulated"))
+        simulated = data.get("source") == SOURCE_SIMULATOR
         model = "Browser Radar Sign Simulator" if simulated else "Speed Display Firmware"
         return {
             "identifiers": {(DOMAIN, data.get("device_id") or self.coordinator.entry.entry_id)},
             "name": f"Speed Display {display_id}",
             "manufacturer": "DIY",
-            "model": model if source else model,
+            "model": model,
         }
 
 
@@ -99,4 +99,3 @@ async def async_setup_entry(hass, entry, async_add_entities):
             ),
         ]
     )
-

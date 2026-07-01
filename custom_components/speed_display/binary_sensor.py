@@ -5,7 +5,7 @@ from __future__ import annotations
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import DOMAIN, SOURCE_SIMULATOR
 from .coordinator import SpeedDisplayCoordinator
 
 
@@ -22,7 +22,7 @@ class SpeedDisplaySimulatedBinarySensor(CoordinatorEntity[SpeedDisplayCoordinato
 
     @property
     def is_on(self) -> bool:
-        return bool(self.coordinator.data.get("simulated"))
+        return self.coordinator.data.get("source") == SOURCE_SIMULATOR
 
     @property
     def device_info(self):
@@ -40,4 +40,3 @@ class SpeedDisplaySimulatedBinarySensor(CoordinatorEntity[SpeedDisplayCoordinato
 async def async_setup_entry(hass, entry, async_add_entities):
     coordinator: SpeedDisplayCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([SpeedDisplaySimulatedBinarySensor(coordinator)])
-

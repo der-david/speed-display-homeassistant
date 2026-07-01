@@ -7,7 +7,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
 
-from .const import CONF_SOURCE_HINT, CONF_TOPIC_PREFIX, DOMAIN, SOURCE_AUTO, SOURCE_FIRMWARE, SOURCE_SIMULATOR
+from .const import CONF_TOPIC_PREFIX, DOMAIN
 
 
 class SpeedDisplayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -28,10 +28,6 @@ class SpeedDisplayConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_NAME, default="Speed Display"): str,
                 vol.Required(CONF_TOPIC_PREFIX, default="speed-display"): str,
-                vol.Required(CONF_SOURCE_HINT, default=SOURCE_AUTO): vol.In(
-                    [SOURCE_AUTO, SOURCE_FIRMWARE, SOURCE_SIMULATOR]
-                ),
             }
         )
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
-
