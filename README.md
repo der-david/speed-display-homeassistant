@@ -57,8 +57,6 @@ Current display state:
 - Neutral Margin
 - State
 - Source
-- Last Range
-- Last Direction
 - Network
 - MQTT
 - Simulated

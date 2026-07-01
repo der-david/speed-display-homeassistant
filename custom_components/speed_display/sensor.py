@@ -150,20 +150,6 @@ SENSOR_DESCRIPTIONS: list[SpeedDisplaySensorDescription] = [
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SpeedDisplaySensorDescription(
-        "last_range",
-        "Last Range",
-        lambda data: _status(data).get("last_speed_range"),
-        icon="mdi:signal",
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    SpeedDisplaySensorDescription(
-        "last_direction",
-        "Last Direction",
-        lambda data: _status(data).get("last_direction"),
-        icon="mdi:arrow-decision",
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    SpeedDisplaySensorDescription(
         "network",
         "Network",
         lambda data: _status(data).get("network"),
