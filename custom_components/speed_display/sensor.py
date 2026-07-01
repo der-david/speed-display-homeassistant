@@ -332,10 +332,14 @@ SPEED_SENSOR_LABELS = {
 
 
 def _period_name(period: str) -> str:
-    return "Today" if period == "today" else "This Week"
+    if period == "today":
+        return "Today"
+    if period == "week":
+        return "This Week"
+    return "Total"
 
 
-for _period in ("today", "week"):
+for _period in ("today", "week", "total"):
     for _key, (_label, _icon) in COUNT_SENSOR_LABELS.items():
         SENSOR_DESCRIPTIONS.append(
             SpeedDisplaySensorDescription(

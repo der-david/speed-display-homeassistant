@@ -84,7 +84,7 @@ Last range transition:
 - Speed
 - Duration
 
-Daily and weekly counters:
+Daily, weekly, and total counters:
 
 - Vehicle Passes
 - Overspeed
@@ -103,7 +103,7 @@ Daily and weekly counters:
 - Braked Fast to Neutral
 - Braked Fast to Safe
 
-Daily and weekly speed statistics:
+Daily, weekly, and total speed statistics:
 
 - Average Vehicle Speed
 - Average Max Vehicle Speed
@@ -141,6 +141,8 @@ data:
 - `all`
 - `today`
 - `week`
+
+`all` resets today, this week, and total statistics. `today` and `week` only reset their respective rolling period.
 
 If `entry_id` is omitted, all configured Speed Display entries are reset.
 

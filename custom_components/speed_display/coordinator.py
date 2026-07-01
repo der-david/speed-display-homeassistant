@@ -162,6 +162,7 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "week_key": week_key,
             "today": self._empty_period(),
             "week": self._empty_period(),
+            "total": self._empty_period(),
         }
 
     async def _async_load_stats(self) -> None:
@@ -186,6 +187,8 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if period in ("week", "all"):
             _, stats["week_key"] = self._period_keys()
             stats["week"] = self._empty_period()
+        if period == "all":
+            stats["total"] = self._empty_period()
         self._update_data(stats=stats)
         await self._async_save_stats()
 
@@ -196,6 +199,7 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "week_key": stats.get("week_key") or week_key,
             "today": self._sanitize_period(stats.get("today")),
             "week": self._sanitize_period(stats.get("week")),
+            "total": self._sanitize_period(stats.get("total")),
         }
         if sanitized["day_key"] != day_key:
             sanitized["day_key"] = day_key
@@ -274,7 +278,7 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         threshold = self._float_or_none((self.data.get("status") or {}).get("speed_limit"))
         neutral_margin = self._float_or_none((self.data.get("status") or {}).get("neutral_margin")) or 0.0
 
-        for period_name in ("today", "week"):
+        for period_name in ("today", "week", "total"):
             period = stats[period_name]
             self._increment(period, "vehicle_passes")
             if end_range:
