@@ -38,7 +38,7 @@ class SpeedDisplayBinarySensor(CoordinatorEntity[SpeedDisplayCoordinator], Binar
         description: SpeedDisplayBinarySensorDescription,
     ) -> None:
         super().__init__(coordinator)
-        self.entity_description = description
+        self._description = description
         self._value_fn = description.value_fn
         self._attr_name = description.name
         self._attr_unique_id = f"{coordinator.entry.entry_id}_{description.key}"

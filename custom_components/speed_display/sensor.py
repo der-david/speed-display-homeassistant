@@ -72,7 +72,7 @@ class SpeedDisplaySensor(CoordinatorEntity[SpeedDisplayCoordinator], SensorEntit
         description: SpeedDisplaySensorDescription,
     ) -> None:
         super().__init__(coordinator)
-        self.entity_description = description
+        self._description = description
         self._value_fn = description.value_fn
         self._attr_name = description.name
         self._attr_unique_id = f"{coordinator.entry.entry_id}_{description.key}"
@@ -86,7 +86,7 @@ class SpeedDisplaySensor(CoordinatorEntity[SpeedDisplayCoordinator], SensorEntit
 
     @property
     def native_unit_of_measurement(self) -> str | None:
-        unit_fn = self.entity_description.unit_fn
+        unit_fn = self._description.unit_fn
         return unit_fn(self.coordinator.data) if unit_fn is not None else None
 
     @property
@@ -97,7 +97,7 @@ class SpeedDisplaySensor(CoordinatorEntity[SpeedDisplayCoordinator], SensorEntit
             "device_id": self.coordinator.data.get("device_id"),
             "display_id": self.coordinator.data.get("display_id"),
         }
-        attributes_fn = self.entity_description.attributes_fn
+        attributes_fn = self._description.attributes_fn
         if attributes_fn is not None:
             attrs.update(attributes_fn(self.coordinator.data))
         return attrs
