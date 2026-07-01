@@ -47,6 +47,7 @@ The integration subscribes to:
 - `<topic_prefix>/event/vehicle_passing`
 
 Firmware and simulator should publish `source=firmware` or `source=simulator` in JSON payloads.
+The `<topic_prefix>/status` payload may include a `device` object with `identifiers`, `name`, `manufacturer`, and `model`; the integration uses that metadata for the Home Assistant device registry.
 
 ## Entities
 

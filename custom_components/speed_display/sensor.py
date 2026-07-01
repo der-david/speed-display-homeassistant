@@ -9,9 +9,9 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, Sen
 from homeassistant.const import EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
 from .const import SOURCE_SIMULATOR
 from .coordinator import SpeedDisplayCoordinator
+from .device_info import speed_display_device_info
 
 ValueFn = Callable[[dict[str, Any]], Any]
 AttributesFn = Callable[[dict[str, Any]], dict[str, Any]]
@@ -96,16 +96,7 @@ class SpeedDisplaySensor(CoordinatorEntity[SpeedDisplayCoordinator], SensorEntit
 
     @property
     def device_info(self):
-        data = self.coordinator.data
-        display_id = data.get("display_id") or self.coordinator.entry.data.get("display_id") or "?"
-        simulated = data.get("source") == SOURCE_SIMULATOR
-        model = "Browser Radar Sign Simulator" if simulated else "Speed Display Firmware"
-        return {
-            "identifiers": {(DOMAIN, data.get("device_id") or self.coordinator.entry.entry_id)},
-            "name": f"Speed Display {display_id}",
-            "manufacturer": "DIY",
-            "model": model,
-        }
+        return speed_display_device_info(self.coordinator.data, self.coordinator.entry)
 
 
 SENSOR_DESCRIPTIONS: list[SpeedDisplaySensorDescription] = [
