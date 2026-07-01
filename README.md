@@ -2,6 +2,8 @@
 
 This repo will hold the HA-facing abstraction around the displays.
 
+License: GNU Affero General Public License v3.0 or later.
+
 Planned scope:
 
 - MQTT entity modeling for one or more displays
@@ -9,4 +11,3 @@ Planned scope:
 - sensors, counters, and utility helpers for Home Assistant dashboards
 
 The display firmware stays HA-agnostic. MQTT remains the primary integration path.
-
