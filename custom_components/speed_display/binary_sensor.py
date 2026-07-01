@@ -53,7 +53,8 @@ class SpeedDisplayBinarySensor(CoordinatorEntity[SpeedDisplayCoordinator], Binar
     def device_info(self):
         data = self.coordinator.data
         display_id = data.get("display_id") or self.coordinator.entry.data.get("display_id") or "?"
-        model = "Browser Radar Sign Simulator" if self.is_on else "Speed Display Firmware"
+        simulated = data.get("source") == SOURCE_SIMULATOR
+        model = "Browser Radar Sign Simulator" if simulated else "Speed Display Firmware"
         return {
             "identifiers": {(DOMAIN, data.get("device_id") or self.coordinator.entry.entry_id)},
             "name": f"Speed Display {display_id}",
