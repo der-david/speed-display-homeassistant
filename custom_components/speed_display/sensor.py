@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from homeassistant.components.sensor import SensorEntity, SensorStateClass
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
 from homeassistant.const import EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -26,6 +26,7 @@ class SpeedDisplaySensorDescription:
     name: str
     value_fn: ValueFn
     icon: str | None = None
+    device_class: SensorDeviceClass | None = None
     entity_category: EntityCategory | None = None
     state_class: SensorStateClass | None = None
     unit_fn: UnitFn | None = None

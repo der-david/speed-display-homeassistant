@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.const import EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -23,6 +23,7 @@ class SpeedDisplayBinarySensorDescription:
     name: str
     value_fn: ValueFn
     icon: str | None = None
+    device_class: BinarySensorDeviceClass | None = None
     entity_category: EntityCategory | None = None
 
 

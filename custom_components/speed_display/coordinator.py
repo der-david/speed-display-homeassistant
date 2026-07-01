@@ -305,8 +305,11 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         return stats
 
-    def _handle_message(self, key: str, payload_bytes: bytes) -> None:
-        raw = payload_bytes.decode("utf-8", errors="ignore").strip()
+    def _handle_message(self, key: str, payload_bytes: bytes | bytearray | str) -> None:
+        if isinstance(payload_bytes, (bytes, bytearray)):
+            raw = bytes(payload_bytes).decode("utf-8", errors="ignore").strip()
+        else:
+            raw = str(payload_bytes).strip()
         try:
             parsed = json.loads(raw)
         except Exception:
