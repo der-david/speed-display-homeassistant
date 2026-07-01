@@ -114,7 +114,9 @@ class SpeedDisplayCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             unsub = await mqtt.async_subscribe(
                 self.hass,
                 topic,
-                lambda msg: self._handle_message(key, msg.payload),
+                lambda msg: self.hass.loop.call_soon_threadsafe(
+                    self._handle_message, key, msg.payload
+                ),
             )
             self._unsubs.append(unsub)
 
