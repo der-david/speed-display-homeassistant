@@ -9,7 +9,7 @@ from homeassistant.components.binary_sensor import BinarySensorDeviceClass, Bina
 from homeassistant.const import EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import SOURCE_SIMULATOR
+from .const import DOMAIN, SOURCE_SIMULATOR
 from .coordinator import SpeedDisplayCoordinator
 from .device_info import speed_display_device_info
 
